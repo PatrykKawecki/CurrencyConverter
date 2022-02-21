@@ -11,29 +11,43 @@ namespace CurrencyConverter
 {
     public class CurrencyConverter
     {
-        public static string[] GetTags()
+        static XmlReader LoadDataFromXml()
         {
-            string[] currencyTags = new string[] {"eur", "usd", "jpy", "bgn", "czk", "dkk", "gbp", "huf", "ltl", "lvl"
-            , "pln", "ron", "sek", "chf", "nok", "hrk", "rub", "try", "aud", "brl", "cad", "cny", "hkd", "idr", "ils"
-            , "inr", "krw", "mxn", "myr", "nzd", "php", "sgd", "zar"};
+            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"XmlFiles\referenceRates.xml");
+            XmlReader xmlReader = XmlReader.Create(path);
+            return xmlReader;
+        }
+        public static List<string> GetTags()
+        {
+            var readXml = LoadDataFromXml();
+            List<string> currencyTags = new List<string>();
+            while (readXml.Read())
+            {
+
+                if ((readXml.NodeType == XmlNodeType.Element) && (readXml.Name == "Cube") && readXml.HasAttributes)
+                {
+                    string currency = readXml.GetAttribute("currency");
+                    currencyTags.Add(currency);
+                }
+
+            }
+            //string[] currencyTags = new string[] {"eur", "usd", "jpy", "bgn", "czk", "dkk", "gbp", "huf", "ltl", "lvl"
+            //, "pln", "ron", "sek", "chf", "nok", "hrk", "rub", "try", "aud", "brl", "cad", "cny", "hkd", "idr", "ils"
+            //, "inr", "krw", "mxn", "myr", "nzd", "php", "sgd", "zar"};
 
             return currencyTags;
         }
 
         public float GetValue(string current)
         {
-            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"XmlFiles\referenceRates.xml");
-            XmlReader xmlReader = XmlReader.Create(path);
-            while (xmlReader.Read())
+            var readXml = LoadDataFromXml();
+            while (readXml.Read())
             {
 
-                if ((xmlReader.NodeType == XmlNodeType.Element) && (xmlReader.Name == "Cube") && (xmlReader.GetAttribute("currency") == current))
+                if ((readXml.NodeType == XmlNodeType.Element) && (readXml.Name == "Cube") && (readXml.GetAttribute("currency") == current) && readXml.HasAttributes)
                 {
-                    if (xmlReader.HasAttributes)
-                    {                           
-                        float rate = float.Parse(xmlReader.GetAttribute("rate").Replace('.', ','));
-                        return rate;
-                    }
+                    float rate = float.Parse(readXml.GetAttribute("rate").Replace('.', ','));
+                    return rate;
                 }
             }
             return 0; 
