@@ -1,10 +1,61 @@
 ﻿using NUnit.Framework;
+using System;
 
 namespace CurrencyConverter.Tests
 {
     [TestFixture]
     public class ConverterTests
     {
+        [TestCase("HACKER")]
+        public void TryGetCurrencyThatNotInTheSystem(string currency)
+        {
+            //Arannge 
+            var converter = new CurrencyConverter();
+            //Act and Assert
+            Assert.Throws<ArgumentNullException>(() => converter.GetValue(currency));
+        }
+
+        [TestCase(3,0)]
+        public void TryMultipleWithZeroAmount(float val, float amount)
+        {
+            //Arannge 
+            var converter = new CurrencyConverter();
+            //Act and Assert
+            Assert.Throws<ArgumentException>(() => converter.Calculate(val, amount));
+        }
+
+        [TestCase(0, 3)]
+        public void TryMultipleWithZeroValue(float val, float amount)
+        {
+            //Arannge 
+            var converter = new CurrencyConverter();
+            //Act and Assert
+            Assert.Throws<ArgumentException>(() => converter.Calculate(val, amount));
+        }
+
+        [TestCase("USD")]
+        public void TryGetCurrencyThatIsInTheSystem(string currency)
+        {
+            //Arrange
+            var converter = new CurrencyConverter();
+            //Act
+            var result = converter.GetValue(currency);
+            //Assert
+            Assert.IsNotNull(result);
+        }
+
+        [TestCase("USD",3,2)]
+        public void TryGetCurrencyThatIsInTheSystem(string currency, float price, float amout)
+        {
+            //Arrange
+            var converter = new CurrencyConverter();
+            //Act
+            var result = converter.Calculate(price, amout);
+            //Assert
+            Assert.IsNotNull(result);
+
+        }
+
         [TestCase("USD", ExpectedResult = 1.1354f)]
         [TestCase("JPY", ExpectedResult = 130.59f)]
         [TestCase("BGN", ExpectedResult = 1.9558f)]
@@ -37,11 +88,11 @@ namespace CurrencyConverter.Tests
         [TestCase("SGD", ExpectedResult = 1.5255f)]
         [TestCase("THB", ExpectedResult = 36.435f)]
         [TestCase("ZAR", ExpectedResult = 17.0858f)]
-        public float GetValueShouldReturnCorrectFloatValue(string current)
+        public float GetValueShouldReturnCorrectFloatValue(string currency)
         {
             var converter = new CurrencyConverter();
-
-            return converter.GetValue(current);
+            return converter.GetValue(currency);
         }
+
     }
 }
