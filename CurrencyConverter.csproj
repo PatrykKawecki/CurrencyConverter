@@ -5,4 +5,18 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="XmlFiles\referenceRates.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="XmlFiles\referenceRates.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Core" Version="2.44.0" />
+  </ItemGroup>
+
 </Project>

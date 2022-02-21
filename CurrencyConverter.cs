@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -20,7 +22,8 @@ namespace CurrencyConverter
 
         public float GetValue(string current)
         {
-            XmlReader xmlReader = XmlReader.Create("C:\\Users\\Patryk\\Desktop\\ATOS\\CurrencyConverter\\XMLFile1.xml");
+            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"XmlFiles\referenceRates.xml");
+            XmlReader xmlReader = XmlReader.Create(path);
             while (xmlReader.Read())
             {
 
