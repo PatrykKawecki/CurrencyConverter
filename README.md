@@ -2,5 +2,5 @@
 
 How to run the project:
 
-1. Clone repo and build the solution
-2. Download ZIP, run solution and build the project.
+1. Clone repo, build the solution and start debugging.
+2. Download ZIP, Extract zip file to disk, run solution, build the project and start debugging.
