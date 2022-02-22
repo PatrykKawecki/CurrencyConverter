@@ -7,25 +7,24 @@ namespace CurrencyConverter.Tests
     public class ConverterTests
     {
         [TestCase("HACKER")]
+        [TestCase("EURO")]
+        [TestCase("SOMETHING")]
+        [TestCase("  ")]
+        [TestCase("123")]
         public void TryGetCurrencyThatNotInTheSystem(string currency)
         {
             //Arannge 
             var converter = new CurrencyConverter();
             //Act and Assert
-            Assert.Throws<ArgumentNullException>(() => converter.GetValue(currency));
+            Assert.Throws<ArgumentException>(() => converter.GetRate(currency));
         }
 
+        [TestCase(123, 0)]
         [TestCase(3,0)]
-        public void TryMultipleWithZeroAmount(float val, float amount)
-        {
-            //Arannge 
-            var converter = new CurrencyConverter();
-            //Act and Assert
-            Assert.Throws<ArgumentException>(() => converter.Calculate(val, amount));
-        }
-
         [TestCase(0, 3)]
-        public void TryMultipleWithZeroValue(float val, float amount)
+        [TestCase(0, 123)]
+        [TestCase(0, 0)]
+        public void TryMultiplybyZero(float val, float amount)
         {
             //Arannge 
             var converter = new CurrencyConverter();
@@ -34,27 +33,62 @@ namespace CurrencyConverter.Tests
         }
 
         [TestCase("USD")]
+        [TestCase("JPY")]
+        [TestCase("BGN")]
+        [TestCase("CZK")]
+        [TestCase("DKK")]
+        [TestCase("GBP")]
+        [TestCase("HUF")]
+        [TestCase("PLN")]
+        [TestCase("RON")]
+        [TestCase("SEK")]
+        [TestCase("CHF")]
+        [TestCase("ISK")]
+        [TestCase("NOK")]
+        [TestCase("HRK")]
+        [TestCase("RUB")]
+        [TestCase("TRY")]
+        [TestCase("AUD")]
+        [TestCase("BRL")]
+        [TestCase("CAD")]
+        [TestCase("CNY")]
+        [TestCase("HKD")]
+        [TestCase("IDR")]
+        [TestCase("ILS")]
+        [TestCase("INR")]
+        [TestCase("KRW")]
+        [TestCase("MXN")]
+        [TestCase("MYR")]
+        [TestCase("NZD")]
+        [TestCase("PHP")]
+        [TestCase("SGD")]
+        [TestCase("THB")]
+        [TestCase("ZAR")]
         public void TryGetCurrencyThatIsInTheSystem(string currency)
         {
             //Arrange
             var converter = new CurrencyConverter();
             //Act
-            var result = converter.GetValue(currency);
+            var result = converter.GetRate(currency);
             //Assert
             Assert.IsNotNull(result);
         }
 
-        [TestCase("USD",3,2)]
-        public void TryGetCurrencyThatIsInTheSystem(string currency, float price, float amout)
+        [TestCase("USD",2f, ExpectedResult = 2.27f)]
+        [TestCase("JPY", 3f, ExpectedResult = 391.77f)]
+        [TestCase("PLN", 4.5f, ExpectedResult = 20.34f)]
+        [TestCase("ISK", 5.23f, ExpectedResult = 736.38f)]
+        [TestCase("BGN", 0.09f, ExpectedResult = 0.18f)]
+        public float CalculateShouldReturnCorrectValue(string currency, float amount)
         {
-            //Arrange
+
             var converter = new CurrencyConverter();
-            //Act
-            var result = converter.Calculate(price, amout);
-            //Assert
-            Assert.IsNotNull(result);
+            float rate = converter.GetRate(currency);
+            var result = converter.Calculate(rate, amount);
+            return result;
 
         }
+
 
         [TestCase("USD", ExpectedResult = 1.1354f)]
         [TestCase("JPY", ExpectedResult = 130.59f)]
@@ -91,7 +125,7 @@ namespace CurrencyConverter.Tests
         public float GetValueShouldReturnCorrectFloatValue(string currency)
         {
             var converter = new CurrencyConverter();
-            return converter.GetValue(currency);
+            return converter.GetRate(currency);
         }
 
     }

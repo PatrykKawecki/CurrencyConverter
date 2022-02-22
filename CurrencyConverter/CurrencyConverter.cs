@@ -11,7 +11,7 @@ using System.Globalization;
 namespace CurrencyConverter
 {
     /// <summary>
-    /// 
+    /// This class contains essential methods to exchange currency rates
     /// </summary>
     public class CurrencyConverter
     {
@@ -23,9 +23,9 @@ namespace CurrencyConverter
         }
 
         /// <summary>
-        /// 
+        /// Private method to read Xml document
         /// </summary>
-        /// <returns></returns>
+        /// <returns>returns XmlReader instance using the stream to xml data</returns>
         private XmlReader LoadDataFromXml()
         {
             string path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), _fileLoaction);
@@ -40,9 +40,9 @@ namespace CurrencyConverter
         }
 
         /// <summary>
-        /// Get list of current currency from xml file
+        /// Get list of currency from xml file
         /// </summary>
-        /// <returns></returns>
+        /// <returns>This method return list of strings from cube currency</returns>
         public List<string> GetTags()
         {
             var readXml = LoadDataFromXml();
@@ -60,11 +60,11 @@ namespace CurrencyConverter
         }
 
         /// <summary>
-        /// 
+        /// Get relevant rate from given currency
         /// </summary>
-        /// <param name="current"></param>
-        /// <returns></returns>
-        public float GetValue(string currency)
+        /// <param name="currency"> This is name of currency </param>
+        /// <returns>returns conversation rate between Euro and Currency in a floating point number</returns>
+        public float GetRate(string currency)
         {
             var readXml = LoadDataFromXml();
             while (readXml.Read())
@@ -76,38 +76,39 @@ namespace CurrencyConverter
                     return rate;
                 }
             }
-            throw new ArgumentNullException($"Currency not found {currency}!");
+            throw new ArgumentException("Invalid currency!");
         }
 
         /// <summary>
-        /// 
+        /// Calculate amout of euro to amout of chosen currency
         /// </summary>
-        /// <param name="val"></param>
-        /// <param name="amount"></param>
-        /// <returns></returns>
-        public float Calculate(float val, float amount)
+        /// <param name="rate">Conversation rate between Euro and Currency</param>
+        /// <param name="amount">amount of euro</param>
+        /// <returns>exchange result</returns>
+        public float Calculate(float rate, float amount)
         {
-            if(amount <= 0)
+
+            if (amount <= 0)
             {
-                throw new ArgumentException("Amount can not be less then 0");
+                throw new ArgumentException("Amount can not be less or equal to 0");
             }
 
-            if (val <= 0)
+            if (rate <= 0)
             {
-                throw new ArgumentException("Value can not be less then 0");
+                throw new ArgumentException("Value can not be less or equal to 0");
             }
 
-            float result = amount * val;
+            float result = MathF.Round(amount, 2) * rate;
+            return MathF.Round(result, 2); 
 
-            return result;
         }
 
 
         /// <summary>
-        /// 
+        /// private method in order not to repeat the code
         /// </summary>
-        /// <param name="readXml"></param>
-        /// <returns></returns>
+        /// <param name="readXml">XmlReader instance that read xml</param>
+        /// <returns>conditional instruction to method GetTags and GetRate</returns>
         private bool IsElementCubeAndHasAttribute(XmlReader readXml)
         {
             return (readXml.NodeType == XmlNodeType.Element) && (readXml.Name == EnviromentSetting.Cube) && readXml.HasAttributes;
